@@ -12,7 +12,7 @@ public class PokemonDAO {
 
     public ArrayList<PokemonTO> findAll(){ //Arraylist que vai retornar objeto de PokemonTO
         ArrayList<PokemonTO> pokemons = new ArrayList<>();
-        String sql = "select * from tb_pokemon order by codigo";
+        String sql = "select * from ddd_pokemon order by codigo";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql))
         {
             ResultSet rs = ps.executeQuery();
@@ -40,7 +40,7 @@ public class PokemonDAO {
 
     public PokemonTO findByCodigo(Long codigo){
         PokemonTO pokemon = new PokemonTO();
-        String sql = "select * from tb_pokemon where codigo = ?";
+        String sql = "select * from ddd_pokemon where codigo = ?";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql))
         {
             ps.setLong(1,codigo);
@@ -64,7 +64,7 @@ public class PokemonDAO {
     }
 
     public PokemonTO save (PokemonTO pokemon) {
-        String sql = "insert into tb_pokemon (nome, altura, peso, categoria, data_captura) values(?, ?, ?, ?, ?)";
+        String sql = "insert into ddd_pokemon (nome, altura, peso, categoria, data_captura) values(?, ?, ?, ?, ?)";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql)) {
             ps.setString(1,pokemon.getNome());
             ps.setDouble(2,pokemon.getAltura());
@@ -86,7 +86,7 @@ public class PokemonDAO {
     }
 
     public boolean delete (Long codigo){
-        String sql = "delete from tb_pokemon where codigo =?";
+        String sql = "delete from ddd_pokemon where codigo =?";
         try(PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql))
         {
             ps.setLong(1 ,codigo);
@@ -101,7 +101,7 @@ public class PokemonDAO {
     }
 
     public PokemonTO update(PokemonTO pokemon){
-        String sql = "update tb_pokemon set nome=?, altura=?, peso=?, categoria=?, data_captura=? where codigo =?";
+        String sql = "update ddd_pokemon set nome=?, altura=?, peso=?, categoria=?, data_captura=? where codigo =?";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql))
         {
             ps.setString(1,pokemon.getNome());
