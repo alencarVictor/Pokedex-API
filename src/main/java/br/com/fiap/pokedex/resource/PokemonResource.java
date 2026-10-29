@@ -40,12 +40,11 @@ public class PokemonResource {
 
     @PostMapping
     public ResponseEntity<?> save(@RequestBody @Valid PokemonTO pokemon){
-        try {
-            PokemonTO resultado = pokemonBO.save(pokemon);
-            return ResponseEntity.status(HttpStatus.CREATED).body(pokemon);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar pokemon");
+        PokemonTO resultado = pokemonBO.save(pokemon);
+        if (resultado != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar pokemon");
     }
 
     @DeleteMapping("/{codigo}")
@@ -60,14 +59,17 @@ public class PokemonResource {
     @PutMapping("/{codigo}")
     public ResponseEntity<?> update (@PathVariable  Long codigo,
                                      @RequestBody @Valid PokemonTO pokemon){
-        try {
-            pokemon.setCodigo(codigo);
-            PokemonTO resultado = pokemonBO.update(pokemon);
-            return ResponseEntity.status(HttpStatus.CREATED).body(pokemon);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Erro ao atualizar o pokemon");
+        // 404: o código da URI não existe no banco
+        if (pokemonBO.findByCodigo(codigo) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pokemon não encontrado!");
         }
+        pokemon.setCodigo(codigo);
+        PokemonTO resultado = pokemonBO.update(pokemon);
+        // 400: o pokémon existe, mas o BO recusou (data no futuro)
+        if (resultado == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao atualizar o pokemon");
+        }
+        // 200: atualização não é criação, então não é 201
+        return ResponseEntity.status(HttpStatus.OK).body(resultado);
     }
-
 }
